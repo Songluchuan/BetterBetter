@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Better Fake, Better Make: Stylized Animation via Generative Data">
+  <meta name="keywords" content="Gaussian-Splatting, 3D Head Avatar, Stylization">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* rainbow text start */
+.rainbow {
+  text-align: center;
+  text-decoration: underline;
+  font-size: 32px;
+  font-family: monospace;
+  letter-spacing: 5px;
+}
+.rainbow_text_animated {
+  background: linear-gradient(to right, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow_animation 6s ease-in-out infinite;
+  background-size: 400% 100%;
+}
+
+@keyframes rainbow_animation {
+  0%,100% {
+      background-position: 0 0;
+  }
+
+  50% {
+      background-position: 100% 0;
+  }
+}
+/* rainbow text done */
+</style>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <!-- <h1 class="title is-1 publication-title">Better Fake, Better Make<br>
+            Stylized Animation via Generative Data</h1> -->
+
+          <h1 class="title is-1 publication-title is-bold">
+            <span class="rainbow_text_animated" style="vertical-align: middle">Better Fake, Better Make</span>
+            </h1>
+          <h1 class="subtitle is-1 publication-subtitle">
+            Stylized Animation via Generative Data
+          </h1>
+
+          <div class="is-size-5 publication-authors" style="width: 85%; margin: 8px auto;" >
+            <span class="rainbow_text_animated">
+              Arxiv 2026
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors" style="width: 90%; margin: 10px auto;" >
+            <span class="author-block">
+              <a href="https://songluchuan.github.io/">Luchuan Song</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="">Shichen Liu</a><sup>1</sup>,
+            </span>
+
+            <span class="author-block">
+              <a href="">Ziqian Bai</a><sup>2</sup>,</span>
+
+            <span class="author-block">
+              <a href="">Stylianos Moschoglou</a>,</span>
+              
+            <span class="author-block">
+              <a href="">Feitong Tan</a><sup>1</sup>,</span>
+            
+            <span class="author-block">
+              <a href="">Chenliang Xu</a><sup>2</sup>,</span>
+            
+            <span class="author-block">
+              <a href="">Zeng Huang</a><sup>1</sup>,</span>
+            
+            <span class="author-block">
+              <a href="">Timo Bolkart</a><sup>1</sup>,</span>
+            
+            <span class="author-block">
+              <a href="">Sean Fanello</a><sup>1</sup>,</span>
+            <span class="author-block">
+
+              <a href="">Yinda Zhang</a><sup>1</sup>,
+            </span>
+          </div>
+        
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Google,</span>
+<!--             <span class="author-block"><sup>2</sup>Sony AI,</span> -->
+            <span class="author-block"><sup>2</sup>University of Rochester,</span>
+          </div>
+        
+        <div class="is-size-5 publication-authors" style="width: 80%; margin: 2px auto;" >
+          <span class="author-block" style="font-size:15px"><p style="color: #fd0d3d;">[PLEASE TURN-ON AUDIO]</p></span>
+
+      </div>
+
+          <div class="column has-text-centered" style="width: 80%; margin: 0px auto;" >
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/Anonymous"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>ArXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/---------(Anonymous)"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://github.com/---------(Anonymous)"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                  </a>
+              </span>
+
+              <span class="link-block">
+                <a href="https://github.com/---------(Anonymous)"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a>
+            </div>
+            
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+        <img src="./static/images/Teaser_demo_3.png"/>
+      <p>
+        <div class="content has-text-justified">
+        Our system generates co-speech 3D facial animation and head motion under multi-modal condition, such as personalized style codes and text embeddings. At its core is a face fly-wheel engine that synthesizes lip-sync facial videos from predefined prompts spanning diverse emotions and head poses, obviating costly lab capture. We will release about 60 hours of synthesized footage with corresponding text prompts to support training and evaluation (as shown in background).
+      </div>
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">The Overview of Synthesis Dataset [Selected]</h2>
+  <!-- <p style="text-align: center;">[We embed the codes of different videos as a condition-driven generation method to obtain speech-driven animations.]</p> -->
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+
+      <div style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%;">
+        
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>gentleman</b> | <b style="color:#d32f2f;">E</b> = <b>frown</b> | <b style="color:#d32f2f;">I</b> = <b>Nan</b></p>
+          <video id="matting-video-1" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/04_frown.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>female</b> | <b style="color:#d32f2f;">E</b> = <b>sad</b> | <b style="color:#d32f2f;">I</b> = <b>medium</b></p>
+          <video id="matting-video-2" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/06_sad_distinct.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>young women</b> | <b style="color:#d32f2f;">E</b> = <b>smile</b> | <b style="color:#d32f2f;">I</b> = <b>vivid</b></p>
+          <video id="matting-video-2" controls playsinline style="width:100%;">
+            <source src="./static/Videos/08_smile_intense.mp4" type="video/mp4">
+          </video>
+        </div>
+
+      </div>
+      </div>
+  </div>
+</section>
+
+
+<section style="background-color: #fff;">
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+
+      <div style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%;">
+        
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>little boy</b> | <b style="color:#d32f2f;">E</b> = <b>cry</b> | <b style="color:#d32f2f;">I</b> = <b>Nan</b></p>
+          <video id="matting-video-1" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/09_crying_intense.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>female</b> | <b style="color:#d32f2f;">E</b> = <b>sad</b> | <b style="color:#d32f2f;">I</b> = <b>medium</b></p>
+          <video id="matting-video-2" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/video_t001.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>young women</b> | <b style="color:#d32f2f;">E</b> = <b>smile</b> | <b style="color:#d32f2f;">I</b> = <b>vivid</b></p>
+          <video id="matting-video-2" controls playsinline style="width:100%;">
+            <source src="./static/Videos/video_t002.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      </div>
+  </div>
+</section>
+
+<section style="background-color: #fff;">
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+
+      <div style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%;">
+        
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>woman</b> | <b style="color:#d32f2f;">E</b> = <b>angry</b> | <b style="color:#d32f2f;">I</b> = <b>strong</b></p>
+          <video id="matting-video-1" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/video_t003.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>man</b> | <b style="color:#d32f2f;">E</b> = <b>fearful</b> | <b style="color:#d32f2f;">I</b> = <b>medium</b></p>
+          <video id="matting-video-2" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/video_t004.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>male professor</b> | <b style="color:#d32f2f;">E</b> = <b>sad</b> | <b style="color:#d32f2f;">I</b> = <b>stuble</b></p>
+          <video id="matting-video-2" controls playsinline style="width:100%;">
+            <source src="./static/Videos/video_t005.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      </div>
+  </div>
+</section>
+
+<section style="background-color: #fff;">
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+
+      <div style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%;">
+        
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>young lady</b> | <b style="color:#d32f2f;">E</b> = <b>singing</b> | <b style="color:#d32f2f;">I</b> = <b>Nan</b></p>
+          <video id="matting-video-1" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/video_t006.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>lady</b> | <b style="color:#d32f2f;">E</b> = <b>happy</b> | <b style="color:#d32f2f;">I</b> = <b>strong</b></p>
+          <video id="matting-video-2" controls playsinline style="width: 100%;">
+            <source src="./static/Videos/01_happy_intense.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <p style="color: black; font-size: 16px;"><b style="color:#d32f2f;">S</b> = <b>woman</b> | <b style="color:#d32f2f;">E</b> = <b>angry</b> | <b style="color:#d32f2f;">I</b> = <b>intense</b></p>
+          <video id="matting-video-2" controls playsinline style="width:100%;">
+            <source src="./static/Videos/10_contempt_distinct.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      </div>
+  </div>
+</section>
+
+<br>
+<br>
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">The overview of generated results</h2>
+        <p style="font-size: 1.2em;">[We use different speech (and music) and different prompt for style control]</p>
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+
+        <div class="item item-10">
+          <p style="color: black; font-size: 16px;"><i>A  male teacher speaks with lips curling into a well-defined smile between phrases.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0443_smile_intense.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A male gamer speaks in short bursts, a strong surprise expression on the face. </i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0103_surprised_distinct.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A man speaks quietly, tears gathering again, the crying expression plain to see.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0469_crying_distinct.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A man exhibits a subtle zest expression, strong smile present and cheeks rounded.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0491_smile_intense.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A man speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0600_happy_subtle.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A female singer sings with crisp phrasing over a gentle pulse.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0097_singing.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-11">
+          <p style="color: black; font-size: 16px;"><i>A female athlete paired with a subtle surprise look.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0187_surprise_subtle.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A male doctor shares a thought, under a clear disappointed expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0832_disappointed_distinct.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-5">
+          <p style="color: black; font-size: 16px;"><i>A teen girl sings with delicate head tone on the high notes.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0249_singing.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-6">
+          <p style="color: black; font-size: 16px;"><i>A female student sings while tapping the meter with fingertips.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0215_singing.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-8">
+          <p style="color: black; font-size: 16px;"><i>A male presenter sings a clipped tag to end the phrase cleanly.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/first_videos/0439_singing.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <!-- <h2 class="title is-3">The overview of generated results</h2> -->
+        <p style="font-size: 1.2em;">[We use same speech and different prompt for style control]</p>
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+
+        <div class="item item-10">
+          <p style="color: black; font-size: 16px;"><i>A man talks with a strong delighted expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0001.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a faint cheerful expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0002.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>He speaks with a strong fearful demeanor.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0003.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A male presenter talks with a high stressed demeanor.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0004.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>Her eyebrows lowering into a clear sad.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0005.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A girl continues speaking with a calm expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0006.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-11">
+          <p style="color: black; font-size: 16px;"><i>A person is speaking with a clear shock expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0007.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>He has a slight laugh expression on the face.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0008.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-5">
+          <p style="color: black; font-size: 16px;"><i>He is holding a clear jealous expression while speaking.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0009.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-6">
+          <p style="color: black; font-size: 16px;"><i>A woman talks on with eyes wide.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0010.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-8">
+          <p style="color: black; font-size: 16px;"><i>He speaks with measured tempo and natural expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0011.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-7">
+          <p style="color: black; font-size: 16px;"><i>A woman is carrying a noticeable unhappy expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0012.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-7">
+          <p style="color: black; font-size: 16px;"><i>She speaks with a exuberant smile on expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0013.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-2">
+          <p style="color: black; font-size: 16px;"><i>She is carrying a noticeable annoyed tone.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0014.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-3">
+          <p style="color: black; font-size: 16px;"><i>He is showing a slight irritated expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0015.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-4">
+          <p style="color: black; font-size: 16px;"><i>She speaks with a high-energy resentful expression.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/gn_videos/gn_0016.mp4"
+                    type="video/mp4">
+          </video>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <!-- <h2 class="title is-3">The overview of generated results</h2> -->
+        <p style="font-size: 1.2em;">[We use same prompt and different speech for animation]</p>
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+
+        <div class="item item-10">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_01.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_02.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_03.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_04.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_05.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_06.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+
+        <div class="item item-11">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_07.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="item item-12">
+          <p style="color: black; font-size: 16px;"><i>A person speaks with a low happy expression, keeping his gaze forward and steady.</i></p>
+          <video id="matting-video" controls playsinline height="100%">
+            <source src="./static/s_videos/video_s_08.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Multi-modality guidance for 3D facial animation has drawn growing interest, yet progress is constrained by the scarcity of high-quality, rich-annotated and style-balanced facial video dataset. As a result, prior methods often trade off realism and flexible conditioning. We tackle these issues with a distillation-base pipeline that leverages world generative models. Our approach has two components: data engine and style generator. In data engine, we construct prompts balanced across facial emotions and head motions, synthesize about 60 hours of facial videos using multiple foundation Text-2-Video (T2V) models, which leverages the powerful generative capabilities of T2V models. For style generator, we learn multi-modality style embeddings (person-specific or language-specific) that are aligned with text (from constructed prompts) embeddings and utilize them as the conditioning signals for a diffusion model to produce stylized 3D facial animation with audio-lip sync. Extensive experiments show that our method delivers high-fidelity, controllable, and style-adaptive facial animation, substantially expanding expressiveness while retaining precise conditional control through generative models distillation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3" style="text-align: center;">Dataset</h2>
+    <div class="content has-text-justified">
+        <img src="./static/images/web_pipeline.jpg"  style="width: 80%; height: auto; display:block; margin: 0 auto;" />
+      <p>Up part: Dataset construction overview. Top three rows: visualizations stratified by prompt attributes (subject, intensity, emotion), as the Stage I and II in Section 3.1. Row 4: 3D face reconstruction from video (Stage IV). Row 5: the 3D facial motion augmentation via pitch (nod) and yaw (shake), prompt metadata is updated with nod or shake accordingly (Stage V). Bottom part: Prompts meta-attribute distribution overview. We meta-segment the prompts, each prompt is composed of three attributes (Subject: S, Emotion: E and Intensity: I), and under each attribute we include as many descriptions as possible. We provide more prompts for visualization at <a href="static/asset/sample_3000_prompts.txt">here</a>.</p>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- <br>
+<br>
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3" style="text-align: center;">Method</h2>
+    <div class="content has-text-justified">
+      <img src="./static/images/T2M_pipeline.png" style="width: 80%; height: auto; display:block; margin: 0 auto;" />
+      <p>Figure. 3. Left: Overview of our language-aligned facial animation pipeline. Prompt sentences are tokenized with T5-base and attend to VQ-VAE motion codes. A word-prefix autoregressive Transformer predicts the next motion token, yielding a sequence. The predicted motion tokens, text tokens, and resampled speech features jointly condition a latent diffusion module, which denoises with time/condition embeddings and a motion projection head to produce continuous 3DMM trajectories. Right: The word cloud of emotion-related/total prompts in our dataset.</p>
+    </div>
+  </div>
+</section> -->
+
+<br>
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">Generated-Results Overview</h2>
+  <!-- <p style="text-align: center;">[<font color="red">No voice and audio in the Demo Video</font>]</p> -->
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+      <div class="content has-text-justified">
+      <div style="width:100%">
+        <video poster="" id="video1" autoplay controls muted loop height="100%">
+          <source src="./static/Videos/render_t.mp4" type="video/mp4">
+        </video>
+        <p>Up part: Dataset construction overview. Top three rows: visualizations stratified by prompt attributes (subject, intensity, emotion), as the Stage I and II in Section 3.1. Row 4: 3D face reconstruction from video (Stage IV). Row 5: the 3D facial motion augmentation via pitch (nod) and yaw (shake), prompt metadata is updated with nod or shake accordingly (Stage V). Bottom part: Prompts meta-attribute distribution overview. We meta-segment the prompts, each prompt is composed of three attributes (Subject: S, Emotion: E and Intensity: I), and under each attribute we include as many descriptions as possible.</p>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<br>
+<br>
+
+
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">Compare With Baselines</h2>
+  
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+      
+      <div style="width:100%">
+        <video id="matting-video" controls playsinline height="80%" style="width: 100%;">
+          <source src="./static/ele_videos/Compare.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <p style="text-align: justify;">
+        We provide a visual comparison against baseline methods, with all results reported in the main paper. EmoTalk exhibits the weakest audio–lip synchronization, likely due to limited training data, whereas our approach delivers the most faithful text-style preservation and the strongest audio-lip synchronization among all compared methods.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<br>
+<br>
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">Ablation Studies</h2>
+  <!-- <p style="text-align: center;">[<font color="red">No voice and audio in the Demo Video</font>]</p> -->
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+      <div style="width:100%">
+        <video id="matting-video" controls playsinline height="80%">
+          <source src="./static/ele_videos/Ablations.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p style="text-align: justify;">
+        We present visualizations from a series of ablation studies, including comparisons of models trained on different datasets, analyses of style variation induced by modifying a single word, and ablations over text–audio configurations and model scales. Across these settings, our method consistently exhibits precise audio-text synchronization on our dataset and achieves the most faithful text-style mapping among the evaluated variants.
+      </p>
+    </div>
+  </div>
+</section>
+
+<br>
+<br>
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">Limitions</h2>
+  <!-- <p style="text-align: center;">[<font color="red">No voice and audio in the Demo Video</font>]</p> -->
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+      <div style="width:100%">
+        <video id="matting-video" controls playsinline height="80%">
+          <source src="./static/ele_videos/Limitions.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p style="text-align: justify;">
+        We also visualize the limitations of our framework in the main paper, highlighting both our enhancements and the remaining constraints in head motion (inherited from the underlying T2V model), as well as the imperfect coupling between music and semantic labels.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<br>
+<br>
+<section style="background-color: #fff;">
+  <h2 class="title is-3" style="text-align: center;">Application [Follow-Speaking-Style]</h2>
+  <p style="text-align: center;">[We embed the codes of different videos as a condition-driven generation method to obtain speech-driven animations.]</p>
+  <div style="width:100%; text-align: center;">
+    <div style="width:960px; text-align: center; margin:auto;">
+      
+      <p style="width:100%; max-width:960px; word-wrap: break-word; text-align: center;">
+      </p>
+
+      <div style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 100%;">
+        
+        <div style="flex: 1;">
+          <video id="matting-video-1" controls playsinline style="width: 80%;">
+            <source src="./static/Videos/Video_t_trp.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <div style="flex: 1;">
+          <video id="matting-video-2" controls playsinline style="width: 80%;">
+            <source src="./static/Videos/video_t_biden.mp4" type="video/mp4">
+          </video>
+        </div>
+
+      </div>
+      <p style="text-align: justify;">
+        We demonstrate style transfer from reference facial videos by directly conditioning the diffusion model on VQ-encoded codes. In this setting, we select reference faces with markedly different speaking styles to drive the animation, while keeping the input audio fixed to enable a clearer, controlled comparison.
+      </p>
+      </div>
+  </div>
+</section>
+
+<br> 
+
+
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code></code>@misc{
+      Arxiv 2026 Submission,
+      #TBD
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer" style="padding-top: 6px; padding-bottom: 6px;">
+  <div class="container">
+    <div class="content has-text-centered">
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Our website template comes from <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> and is modified based on it. Thanks to the authors for providing beautiful icons.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
